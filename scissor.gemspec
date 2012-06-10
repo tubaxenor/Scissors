@@ -1,5 +1,5 @@
 Gem::Specification.new do |s|
-  s.name        = 'scissors'
+  s.name        = 'scissor'
   s.version     = '0.0.0'
   s.date        = '2012-06-10'
   s.summary     = "cut the crap out"
@@ -12,6 +12,6 @@ Gem::Specification.new do |s|
                 lib/netfix.rb
                   ]
   s.homepage    =
-    ''
+    'https://github.com/tubaxenor/Scissor'
   s.add_runtime_dependency('nokogiri', "~> 1.5.3")
 end
