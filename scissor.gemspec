@@ -1,14 +1,14 @@
 Gem::Specification.new do |s|
   s.name        = 'scissor'
   s.version     = '0.0.0'
-  s.date        = '2012-06-10'
+  s.date        = '2012-06-18'
   s.summary     = "cut the crap out"
   s.description = "A nokogiri based html parser gem"
   s.authors     = ["Wei-fong Chang"]
   s.email       = 'xenor@codegreenit.com'
   s.require_paths = %w[lib]
   s.files       = %w[
-                lib/scissors.rb
+                lib/scissor.rb
                 lib/netfix.rb
                   ]
   s.homepage    =
