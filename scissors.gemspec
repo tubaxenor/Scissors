@@ -1,5 +1,5 @@
 Gem::Specification.new do |s|
-  s.name        = 'scissor'
+  s.name        = 'scissors'
   s.version     = '0.0.0'
   s.date        = '2012-06-18'
   s.summary     = "cut the crap out"
@@ -8,10 +8,10 @@ Gem::Specification.new do |s|
   s.email       = 'xenor@codegreenit.com'
   s.require_paths = %w[lib]
   s.files       = %w[
-                lib/scissor.rb
+                lib/scissors.rb
                 lib/netfix.rb
                   ]
   s.homepage    =
-    'https://github.com/tubaxenor/Scissor'
+    'https://github.com/tubaxenor/Scissors'
   s.add_runtime_dependency('nokogiri', "~> 1.5.3")
 end
