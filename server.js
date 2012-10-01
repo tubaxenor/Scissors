@@ -1,48 +1,38 @@
-var restify = require('restify');
-var server = restify.createServer();
-var mongoose = require('mongoose');
-var db = mongoose.connect("127.0.0.1", "scissors", 12356);
-var Schema = mongoose.Schema;
+var express = require('express');
+var sockeio = require('socket.io'),
+    cons = require('consolidate'),
+    http = require("http"),
+    child_process = require('child_process'),
+    app = express(),
+    bootstrap = require('bootstrap-stylus'),
+       stylus = require('stylus');
 
-var Pages = new Schema({
-  name: String,
-  title: String,
-  date: Date,
-  content: String
-})
-
-mongoose.model('Page', Pages);
-var Page = mongoose.model('Page');
-
-
-//routing
-function getPages(req, res, next){
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  Page.find().sort('date', -1).execFind(function (arr,data) {
-    res.send(data);
-  });
+function compile(str, path) {
+  return stylus(str)
+    .set('filename', path)
+    .use(bootstrap());
 }
 
-function postPage(req, res, next){
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-
-  var page = new Page();
-  page.name = req.params.name;
-  page.date = new Date();
-  page.title = req.params.title;
-  page.content = req.params.content;
-  page.save(function(){
-    res.send(req.body);
-  });
-
-}
-
-server.get('/pages', getPageges);
-server.post('/pages', postPagege);
-
-server.use(restify.bodyParser());
-server.listen(8080, function() {
-  console.log('%s listening at %s', server.name, server.url);
+app.configure(function(){
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.set('view engine', 'jade');
+  app.set('views', __dirname + '/views');
+  app.set('view options', { layout: false });
+  app.use(stylus.middleware({
+    src: __dirname + '/public',
+    compile: compile
+  }));
+  app.use(app.router);
+  app.use(express.static(__dirname + '/public'));
 });
+
+
+app.get('/', function(req, res){ res.render('index') });
+
+
+//var io = sockeio.listen(http.createServer(app), { 'log level': 1 })
+
+app.listen("3030");
+console.log("running scissors on port 3030!");
+>>>>>>> 10da8d50e7df7054216286e3dde925b45bac08b7
