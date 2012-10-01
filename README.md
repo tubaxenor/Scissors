@@ -8,7 +8,7 @@ Requirements
 
 - nodejs: http://nodejs.org/
 
-  (You can also use nvm https://github.com/creationix/nvm to manage the node version control)
+  (You can also use nvm https://github.com/creationix/nvm to manage the node versions)
 
 Initialize
 ========
