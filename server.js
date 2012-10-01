@@ -1,8 +1,8 @@
-var express = require('express');
-var sockeio = require('socket.io'),
+var express = require('express'),
+//var sockeio = require('socket.io'),
     cons = require('consolidate'),
     http = require("http"),
-    child_process = require('child_process'),
+    //child_process = require('child_process'),
     app = express(),
     bootstrap = require('bootstrap-stylus'),
        stylus = require('stylus');
@@ -35,4 +35,3 @@ app.get('/', function(req, res){ res.render('index') });
 
 app.listen("3030");
 console.log("running scissors on port 3030!");
->>>>>>> 10da8d50e7df7054216286e3dde925b45bac08b7

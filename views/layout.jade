@@ -2,10 +2,10 @@
 html
   head
     link(rel='stylesheet', href='/css/style.css')
+    script(type='text/javascript', href='/js/bootstrap.js')
+    script(type='text/javascript', href='http://code.jquery.com/jquery.min.js')
   body
-    .navbar.navbar-fixed-top
-      .navbar-inner
-        .container
+    block header
     .content
       .container
         block main
