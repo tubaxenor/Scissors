@@ -1,0 +1,31 @@
+!!! 5
+html
+  head
+    link(type='text/css', rel='stylesheet', href='/css/bootstrap.css')
+    link(type='text/css', rel='stylesheet', href='/css/font-awesome.css')
+    block css
+    script(type='text/javascript', src='http://code.jquery.com/jquery.min.js')
+    script(type='text/javascript', src='/js/bootstrap.js')
+    block script
+  body
+    .navbar
+      .navbar-inner
+        a.brand(href="/") Scissors
+        ul.nav
+          li.home
+            a(href="/") Home
+          li.new
+            a(href="/new")
+              i.icon-cut
+              |  Cut a New Paper
+    .content
+      .container
+        block main
+  script(type='text/javascript')
+    $(function(){
+      $("ul.nav li").each(function(){
+        if("/"+$(this).attr('class')==window.location.pathname || ($(this).attr('class')=='home' && window.location.pathname == "/")){
+          $(this).addClass('active');
+        }
+      })
+    });

@@ -1,20 +1,76 @@
-var express = require('express');
-var sockeio = require('socket.io'),
+var express = require('express'),
+    sockeio = require('socket.io'),
     cons = require('consolidate'),
-    http = require("http"),
+    http = require('http'),
+    model = require('./model.js')
     child_process = require('child_process'),
+    fs = require('fs'),
+    stylus = require('stylus'),
+    ghm = require("github-flavored-markdown"),
+    phantom = require('phantom'),
     app = express();
 
-app.engine('haml', cons.haml);
-app.set('view engine', 'haml');
-app.set('views', __dirname + '/views');
-
-app.get('/', function(req, res){
-  res.render('index');
+app.configure(function(){
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.set('view engine', 'jade');
+  app.set('views', __dirname + '/views');
+  app.set('view options', { layout: false });
+  app.use(stylus.middleware({
+    src: __dirname + '/public',
+  }));
+  app.use(app.router);
+  app.use(express.static(__dirname + '/public'));
 });
 
 
-var io = sockeio.listen(http.createServer(app), { 'log level': 1 })
+readme = fs.readFileSync("./README.md", "utf8");
+app.locals({ md : function(text){
+  return ghm.parse(text);
+}});
 
-http.createServer(app).listen("3030");
+app.locals({ md : function(text){
+  return ghm.parse(text);
+}});
+
+var io = sockeio.listen(http.createServer(app), { 'log level': 1 });
+io.sockets.on('connection', function(socket) {
+  socket.on('load', function(path) {
+    model.load(path)
+    .on('success', function(file) {
+      socket.emit('file', { path: path, error: null, file: file })
+    })
+    .on('error', function(err) {
+      socket.emit('file', { path: path, error: err, file: null })
+    })
+  })
+});
+app.get('/', function(req, res){ res.render('index', {"readme": readme}) });
+
+app.get('/new', function(req, res){
+  res.render('new');
+});
+
+app.get('/phan', function(req, res){
+  url = req.param("url")
+  console.log(url)
+  phantom.create(function(ph) {
+    return ph.createPage(function(page){
+      return page.open(url, function(status){
+          setTimeout(function() {
+            return page.evaluate(function() {
+                return document.getElementsByTagName('body')[0].innerHTML;
+            }, function(result) {
+                res.send(result);
+                ph.exit();
+            });
+        }, 5000);
+      })
+    })
+  })
+})
+
+//var io = sockeio.listen(http.createServer(app), { 'log level': 1 })
+
+app.listen("3030");
 console.log("running scissors on port 3030!");
