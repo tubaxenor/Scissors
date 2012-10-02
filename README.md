@@ -10,6 +10,8 @@ Requirements
 
   (You can also use nvm https://github.com/creationix/nvm to manage the node versions)
 
+- phantomjs: http://phantomjs.org/
+
 Initialize
 ========
 
@@ -20,8 +22,8 @@ First, link with npm:
 After the packages was installed, you can launch the server by:
 
     node server.js
-    
+
 You can now visit http://localhost:3030 to use the scissors!
 
 
- 
+
