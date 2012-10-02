@@ -1,0 +1,38 @@
+extends layout
+block script
+  script(type='text/javascript', src='/js/blockui.js')
+
+block main
+  .row
+    .span4.sidebar
+      label Give me an url:
+      input.go(type="text", size="25")
+      a#go.btn.btn-primary(href="#", style="inline; margin-bottom: 9px;") Go!
+      .alert.alert-error.hide(style="width:60%")
+        button.close(type="button")
+          div(style="font-size:8px")
+            i.icon-remove
+        #msg
+    .span8
+      #preview
+
+  script(type="text/javascript")
+    $(".close").click(function(){
+      $(".alert").fadeOut("slow");
+      $(".alert #msg").html("");
+    });
+    $("#go").click(function(e){
+      url = $(".go").val();
+      e.preventDefault();
+      if(url.indexOf("http://")!=0 && url.indexOf("https://")!=0){
+        $("#msg").html("Huh? What are u doing?");
+        $(".alert").fadeIn("slow");
+      } else {
+        $.blockUI();
+        $.get("/phan",{url: url}, function(res){
+          $.unblockUI();
+          $("#preview").html(res)
+        })
+      }
+    });
+
