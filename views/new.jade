@@ -18,15 +18,15 @@ block main
 
   script(type="text/javascript")
     $(".close").click(function(){
-      $(".alert").fadeOut("slow");
       $(".alert #msg").html("");
+      $(".alert").fadeOut();
     });
     $("#go").click(function(e){
       url = $(".go").val();
       e.preventDefault();
       if(url.indexOf("http://")!=0 && url.indexOf("https://")!=0){
         $("#msg").html("Huh? What are u doing?");
-        $(".alert").fadeIn("slow");
+        $(".alert").fadeIn();
       } else {
         $.blockUI();
         $.get("/phan",{url: url}, function(res){

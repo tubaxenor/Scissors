@@ -70,7 +70,6 @@ app.get('/phan', function(req, res){
   })
 })
 
-//var io = sockeio.listen(http.createServer(app), { 'log level': 1 })
 
 app.listen("3030");
 console.log("running scissors on port 3030!");
