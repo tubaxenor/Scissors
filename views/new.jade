@@ -28,10 +28,14 @@ block main
         $("#msg").html("Huh? What are u doing?");
         $(".alert").fadeIn();
       } else {
+        servername = url.split(/\/+/g)[0]+"//"+url.split(/\/+/g)[1];
         $.blockUI();
-        $.get("/phan",{url: url}, function(res){
+        $.get("/phan",{url: url}, function(data){
           $.unblockUI();
-          $("#preview").html(res)
+          //console.log($("script", $(data)))
+          //$("script", $(data)).each( function(){ $(this).attr("src", servername + $(this).attr("src")) });
+          //$("link", $(data)).each( function(){ $(this).attr("href", servername + $(this).attr("href")) });
+          $("#preview").html(data)
         })
       }
     });

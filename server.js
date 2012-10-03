@@ -53,18 +53,22 @@ app.get('/new', function(req, res){
 
 app.get('/phan', function(req, res){
   url = req.param("url")
-  console.log(url)
   phantom.create(function(ph) {
     return ph.createPage(function(page){
       return page.open(url, function(status){
-          setTimeout(function() {
-            return page.evaluate(function() {
-                return document.getElementsByTagName('body')[0].innerHTML;
-            }, function(result) {
-                res.send(result);
-                ph.exit();
-            });
-        }, 5000);
+        console.log("opened site? ", status);
+          page.injectJs('http://code.jquery.com/jquery.min.js', function() {
+            setTimeout(function() {
+              return page.evaluate(function() {
+                  $(function(){
+                    return $("html").html();
+                  })
+              }, function(result) {
+                  res.send(result);
+                  ph.exit();
+              });
+          }, 5000);
+        })
       })
     })
   })
