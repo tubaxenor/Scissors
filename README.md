@@ -17,7 +17,7 @@ Initialize
 
 First, link with npm:
 
-    sudo npm link
+    npm link
 
 After the packages was installed, you can launch the server by:
 
