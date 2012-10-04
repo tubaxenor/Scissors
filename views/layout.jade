@@ -21,11 +21,7 @@ html
     .content
       .container
         block main
-  script(type='text/javascript')
-    $(function(){
-      $("ul.nav li").each(function(){
-        if("/"+$(this).attr('class')==window.location.pathname || ($(this).attr('class')=='home' && window.location.pathname == "/")){
-          $(this).addClass('active');
-        }
-      })
-    });
+  :coffeescript
+    $ ->
+      $("ul.nav li").each ->
+        $(this).addClass('active') if "/"+$(this).attr('class')==window.location.pathname or ($(this).attr('class')=='home' and window.location.pathname == "/")

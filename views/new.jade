@@ -14,25 +14,25 @@ block main
             i.icon-remove
         #msg
     .span8
-      #preview
+      .modal.hide.fade#preview
 
-  script(type="text/javascript")
-    $(".close").click(function(){
-      $(".alert").fadeOut("slow");
-      $(".alert #msg").html("");
-    });
-    $("#go").click(function(e){
-      url = $(".go").val();
-      e.preventDefault();
-      if(url.indexOf("http://")!=0 && url.indexOf("https://")!=0){
-        $("#msg").html("Huh? What are u doing?");
-        $(".alert").fadeIn("slow");
-      } else {
-        $.blockUI();
-        $.get("/phan",{url: url}, function(res){
-          $.unblockUI();
-          $("#preview").html(res)
-        })
-      }
-    });
+  :coffeescript
+    $(".close").click ->
+      $(".alert #msg").html ""
+      $(".alert").fadeOut()
+      return
 
+    $("#go").click (e) ->
+      url = $(".go").val()
+      e.preventDefault()
+      if url.indexOf("http://")!=0 and url.indexOf("https://")!=0
+        $("#msg").html "Huh? What are u doing?"
+        $(".alert").fadeIn()
+      else
+        #servername = url.split(/\/+/g)[0]+"//"+url.split(/\/+/g)[1]
+        $.blockUI()
+        $.get "/phan", {url: url}, (res) ->
+          window.location.replace "res?domain="+res
+          #$("#preview").modal "toggle"
+          return
+      return

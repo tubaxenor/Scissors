@@ -10,6 +10,14 @@ Requirements
 
   (You can also use nvm https://github.com/creationix/nvm to manage the node versions)
 
+- coffeescript: http://coffeescript.org/
+
+
+  ```
+  npm install coffee-script -g
+  ```
+
+
 - phantomjs: http://phantomjs.org/
 
 Initialize
@@ -17,11 +25,11 @@ Initialize
 
 First, link with npm:
 
-    sudo npm link
+    npm link
 
 After the packages was installed, you can launch the server by:
 
-    node server.js
+    coffee server.coffee
 
 You can now visit http://localhost:3030 to use the scissors!
 
