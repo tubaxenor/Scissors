@@ -12,7 +12,11 @@ Requirements
 
 - coffeescript: http://coffeescript.org/
 
-    npm install coffee-script -g
+
+  ```
+  npm install coffee-script -g
+  ```
+
 
 - phantomjs: http://phantomjs.org/
 
