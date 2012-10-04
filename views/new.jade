@@ -16,27 +16,23 @@ block main
     .span8
       #preview
 
-  script(type="text/javascript")
-    $(".close").click(function(){
-      $(".alert #msg").html("");
-      $(".alert").fadeOut();
-    });
-    $("#go").click(function(e){
-      url = $(".go").val();
-      e.preventDefault();
-      if(url.indexOf("http://")!=0 && url.indexOf("https://")!=0){
-        $("#msg").html("Huh? What are u doing?");
-        $(".alert").fadeIn();
-      } else {
-        servername = url.split(/\/+/g)[0]+"//"+url.split(/\/+/g)[1];
-        $.blockUI();
-        $.get("/phan",{url: url}, function(data){
-          $.unblockUI();
-          //console.log($("script", $(data)))
-          //$("script", $(data)).each( function(){ $(this).attr("src", servername + $(this).attr("src")) });
-          //$("link", $(data)).each( function(){ $(this).attr("href", servername + $(this).attr("href")) });
-          $("#preview").html(data)
-        })
-      }
-    });
+  :coffeescript
+    $(".close").click ->
+      $(".alert #msg").html ""
+      $(".alert").fadeOut()
+      return
 
+    $("#go").click (e) ->
+      url = $(".go").val()
+      e.preventDefault()
+      if url.indexOf("http://")!=0 and url.indexOf("https://")!=0
+        $("#msg").html "Huh? What are u doing?"
+        $(".alert").fadeIn()
+      else
+        servername = url.split(/\/+/g)[0]+"//"+url.split(/\/+/g)[1]
+        $.blockUI()
+        $.get "/phan", {url: url}, (data) ->
+          $.unblockUI()
+          $("#preview").html data
+          return
+      return
