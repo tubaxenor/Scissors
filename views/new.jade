@@ -29,10 +29,11 @@ block main
         $("#msg").html "Huh? What are u doing?"
         $(".alert").fadeIn()
       else
-        servername = url.split(/\/+/g)[0]+"//"+url.split(/\/+/g)[1]
+        #servername = url.split(/\/+/g)[0]+"//"+url.split(/\/+/g)[1]
         $.blockUI()
         $.get "/phan", {url: url}, (data) ->
           $.unblockUI()
+          console.log data
           $("#preview").html data
           return
       return

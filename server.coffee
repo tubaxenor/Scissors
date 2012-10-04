@@ -2,13 +2,14 @@ express = require 'express'
 sockeio = require 'socket.io'
 cons = require 'consolidate'
 http = require 'http'
-model = require './model.js'
+model = require './model.coffee'
 child_process = 'child_process'
 fs = require 'fs'
 stylus = require 'stylus'
 ghm = require 'github-flavored-markdown'
 phantom = require 'phantom'
 app = express()
+jsdom = require 'jsdom'
 
 app.configure ->
     app.use express.bodyParser()
@@ -46,6 +47,8 @@ app.get '/new', (req, res) -> res.render 'new'
 
 app.get '/phan', (req, res) ->
   url = req.param "url"
+  servername = url.split(/\/+/g)[0]+"//"+url.split(/\/+/g)[1]
+
   phantom.create (ph) ->
     ph.createPage (page) ->
       page.open url, (status) ->
@@ -53,14 +56,26 @@ app.get '/phan', (req, res) ->
         page.injectJs 'http://code.jquery.com/jquery.min.js', ->
           setTimeout ->
             page.evaluate ->
-                $ ->
-                  $("html").html
-                (result) ->
-                res.send result
+              $("html").html()
+            ,(result) ->
+              jsdom.env result, ['http://code.jquery.com/jquery.min.js'], (err, window) ->
+                $ = window.$
+                $("head link").each ->
+                  $(this).attr "href", servername+$(this).attr('href') unless $(this).attr('href').indexOf("http") == 0
+                  return
+                $("a").each ->
+                  $(this).attr "href", servername+$(this).attr('href') unless $(this).attr('href').indexOf("http") == 0
+                  return
+                $("head script").each ->
+                  $(this).attr "src", servername+$(this).attr('src') unless $(this).attr('src').indexOf("http") == 0
+                  return
+                res.send $("html").html()
                 ph.exit()
-                return
-            , 5000
-           return
+              return
+            return
+          ,5000
+          return
+        return
 
 app.listen "3030"
 console.log "running scissors on port 3030!"
