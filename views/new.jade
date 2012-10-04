@@ -14,7 +14,7 @@ block main
             i.icon-remove
         #msg
     .span8
-      #preview
+      .modal.hide.fade#preview
 
   :coffeescript
     $(".close").click ->
@@ -31,9 +31,8 @@ block main
       else
         #servername = url.split(/\/+/g)[0]+"//"+url.split(/\/+/g)[1]
         $.blockUI()
-        $.get "/phan", {url: url}, (data) ->
-          $.unblockUI()
-          console.log data
-          $("#preview").html data
+        $.get "/phan", {url: url}, (res) ->
+          window.location.replace "res?domain="+res
+          #$("#preview").modal "toggle"
           return
       return

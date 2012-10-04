@@ -10,7 +10,7 @@ ghm = require 'github-flavored-markdown'
 phantom = require 'phantom'
 app = express()
 jsdom = require 'jsdom'
-
+html2jade = require 'html2jade'
 app.configure ->
     app.use express.bodyParser()
     app.use express.methodOverride()
@@ -45,6 +45,10 @@ app.get '/', (req, res) -> res.render 'index', {"readme": readme}
 
 app.get '/new', (req, res) -> res.render 'new'
 
+app.get '/res', (req, res) ->
+  file = req.param "domain"
+  res.render 'tmp/'+file+"_cut.jade"
+
 app.get '/phan', (req, res) ->
   url = req.param "url"
   servername = url.split(/\/+/g)[0]+"//"+url.split(/\/+/g)[1]
@@ -58,18 +62,26 @@ app.get '/phan', (req, res) ->
             page.evaluate ->
               $("html").html()
             ,(result) ->
-              jsdom.env result, ['http://code.jquery.com/jquery.min.js'], (err, window) ->
+              jsdom.env result, ['http://code.jquery.com/jquery.min.js', '/js/blockui.js'], (err, window) ->
                 $ = window.$
                 $("head link").each ->
                   $(this).attr "href", servername+$(this).attr('href') unless $(this).attr('href').indexOf("http") == 0
                   return
                 $("a").each ->
-                  $(this).attr "href", servername+$(this).attr('href') unless $(this).attr('href').indexOf("http") == 0
+                  $(this).attr "href", ""
                   return
                 $("head script").each ->
                   $(this).attr "src", servername+$(this).attr('src') unless $(this).attr('src').indexOf("http") == 0
                   return
-                res.send $("html").html()
+                $("img").each ->
+                  $(this).attr "src", servername+$(this).attr('src') unless $(this).attr('src').indexOf("http") == 0
+                  return
+                $("script").html "" if $("script").text().indexOf("//<![CDATA[")
+                html2jade.convertHtml $("html").html(), {}, (err, jade) ->
+                  fs.writeFileSync "./views/tmp/"+url.split(/\/+/g)[1]+"_cut.jade", jade, "utf8"
+                  return
+
+                res.send url.split(/\/+/g)[1]
                 ph.exit()
               return
             return
