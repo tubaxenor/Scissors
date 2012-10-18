@@ -1,23 +1,19 @@
 express = require 'express'
-sockeio = require 'socket.io'
-cons = require 'consolidate'
+socketio = require 'socket.io'
 http = require 'http'
 model = require './model.coffee'
 child_process = 'child_process'
 fs = require 'fs'
-stylus = require 'stylus'
 ghm = require 'github-flavored-markdown'
-phantom = require 'phantom'
+browser = require 'zombie'
 app = express()
-jsdom = require 'jsdom'
-html2jade = require 'html2jade'
+cheerio = require 'cheerio'
 app.configure ->
     app.use express.bodyParser()
     app.use express.methodOverride()
     app.set 'view engine', 'jade'
     app.set 'views', __dirname + '/views'
     app.set 'view options', { layout: false }
-    app.use stylus.middleware { src: __dirname + '/public' }
     app.use app.router
     app.use express.static __dirname + '/public'
     return
@@ -26,7 +22,7 @@ app.configure ->
 readme = fs.readFileSync "./README.md", "utf8"
 app.locals { md : (text) -> ghm.parse text }
 
-io = sockeio.listen http.createServer(app), { 'log level': 1 }
+io = socketio.listen http.createServer(app), { 'log level': 1 }
 
 io.sockets.on 'connection', (socket) ->
   socket
@@ -52,42 +48,23 @@ app.get '/res', (req, res) ->
 app.get '/phan', (req, res) ->
   url = req.param "url"
   servername = url.split(/\/+/g)[0]+"//"+url.split(/\/+/g)[1]
-
-  phantom.create (ph) ->
-    ph.createPage (page) ->
-      page.open url, (status) ->
-        console.log "opened site? ", status
-        page.injectJs 'http://code.jquery.com/jquery.min.js', ->
-          setTimeout ->
-            page.evaluate ->
-              $("html").html()
-            ,(result) ->
-              jsdom.env result, ['http://code.jquery.com/jquery.min.js', '/js/blockui.js'], (err, window) ->
-                $ = window.$
-                $("head link").each ->
-                  $(this).attr "href", servername+$(this).attr('href') unless $(this).attr('href').indexOf("http") == 0
-                  return
-                $("a").each ->
-                  $(this).attr "href", ""
-                  return
-                $("head script").each ->
-                  $(this).attr "src", servername+$(this).attr('src') unless $(this).attr('src').indexOf("http") == 0
-                  return
-                $("img").each ->
-                  $(this).attr "src", servername+$(this).attr('src') unless $(this).attr('src').indexOf("http") == 0
-                  return
-                $("script").html "" if $("script").text().indexOf("//<![CDATA[")
-                html2jade.convertHtml $("html").html(), {}, (err, jade) ->
-                  fs.writeFileSync "./views/tmp/"+url.split(/\/+/g)[1]+"_cut.jade", jade, "utf8"
-                  return
-
-                res.send url.split(/\/+/g)[1]
-                ph.exit()
-              return
-            return
-          ,5000
-          return
-        return
+  console.log "processing..."
+  browser.visit url, (e, browser)->
+    console.log "open url..."
+    $ = cheerio.load browser.html()
+    $("head link").each ->
+      $(this).attr "href", servername+$(this).attr('href') unless $(this).attr('href').indexOf("http") == 0
+    $("a").each (i, el) ->
+      $(this).attr "href", ""
+    $("head script").each (i, el) ->
+      $(this).attr "src", servername+$(this).attr('src') unless $(this).attr('src').indexOf("http") == 0
+    $("img").each (i, el) ->
+      $(this).attr "src", servername+$(this).attr('src') unless $(this).attr('src').indexOf("http") == 0
+    $("script").html "" if $("script").text().indexOf("//<![CDATA[")
+    console.log $.html()
+    console.log "writing file..."
+    fs.writeFileSync "./views/tmp/"+url.split(/\/+/g)[1]+"_cut.jade", $.html(), "utf8"
+    res.send url.split(/\/+/g)[1]
 
 app.listen "3030"
 console.log "running scissors on port 3030!"
