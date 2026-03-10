@@ -1,7 +1,7 @@
 Scissors(wip)
 ========
 
-Cut the crap, finding what is really matter in a given url
+Cut the crap, finding what really matters in a given url
 
 Requirements
 ========
